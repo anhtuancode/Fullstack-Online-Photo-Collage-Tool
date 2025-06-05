@@ -1,1 +1,0 @@
-# Fullstack-Online-Photo-Collage-Tool
