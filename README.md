@@ -57,6 +57,8 @@ Dự án gồm 4 phần chính:
 - Theo dõi tiến trình xử lý ảnh qua `task_id`
 - Hiển thị ảnh kết quả và tải xuống
 
+---
+
 ## 🧪 Hướng dẫn cài đặt & chạy dự án
 
 Dự án gồm 2 phần chính: `backend` và `frontend`. Ngoài ra cần Redis để quản lý hàng đợi tác vụ (task queue) và Celery để xử lý ảnh.
@@ -70,7 +72,7 @@ Yêu cầu:
 - Redis
 - Docker (nếu chưa cài Redis)
 
-git clone https://github.com/your-username/photo-collage-tool.git
+git clone https://github.com/anhtuancode/Fullstack-Online-Photo-Collage-Tool.git
 
 ---
 
