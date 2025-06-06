@@ -6,8 +6,8 @@ const userRouter = express.Router();
 
 // Tạo route 
 userRouter.post("/upload-image", uploadLocal.single('path'), userController.uploadImage)
-userRouter.post("/create-task", uploadLocal.array('path', 10), userController.createCollage)
-userRouter.get("/check-status/:id", userController.getCollageStatus)
+userRouter.post("/create-task", uploadLocal.array('path', 10), userController.createTask)
+userRouter.get("/check-status/:id", userController.getTaskStatus)
 
 
 export default userRouter;

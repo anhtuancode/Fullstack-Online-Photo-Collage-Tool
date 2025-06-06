@@ -13,7 +13,7 @@ export const userService = {
       imgUrl: `images/${file.filename}`,
     };
   },
-  createCollage: async function (req) {
+  createTask: async function (req) {
     const files = req.files
       ? req.files.map((file) => file.path)
       : req.body.files;
@@ -32,18 +32,18 @@ export const userService = {
     }
 
     // Gọi service để thêm tác vụ vào hàng đợi
-    const job = await imageService.createCollageJob(
+    const job = await imageService.createTaskJob(
       files,
       layout,
       parsedBorderWidth,
       border_color
     );
 
-    return job;
+    return { jobId: Number(job.id) };
   },
-  getCollageStatus: async function (req) {
-    const { jobId } = req.params;
-    const jobStatus = await imageService.getJobStatus(jobId);
+  getTaskStatus: async function (req) {
+    const jobId = Number(req.params.id);
+    const jobStatus = await imageService.getTaskStatus(jobId);
 
     if (!jobStatus) {
       throw BadRequestException("Collage job not found");

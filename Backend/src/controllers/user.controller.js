@@ -12,19 +12,19 @@ export const userController = {
       next(err);
     }
   },
-  async createCollage(req, res, next) {
+  async createTask(req, res, next) {
     try {
-      const result = await userService.createCollage(req);
+      const result = await userService.createTask(req);
       const response = responseSuccess(result, `Collage image successfully`);
       res.status(response.statusCode).json(response);
     } catch (error) {
       next(error);
     }
   },
-  async getCollageStatus(req, res, next) {
+  async getTaskStatus(req, res, next) {
     try {
-      const result = await userService.getCollageStatus(req);
-      const response = responseSuccess(result, `Get Collage status successfully`);
+      const result = await userService.getTaskStatus(req);
+      const response = responseSuccess(result, `Get task status successfully`);
       res.status(response.statusCode).json(response);
     } catch (error) {
       next(error);

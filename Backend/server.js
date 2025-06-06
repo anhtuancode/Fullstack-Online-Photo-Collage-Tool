@@ -12,6 +12,7 @@ const app = express()
 app.use(express.json());
 app.use(cors());
 
+app.use('/images', express.static('images'));
 app.use('/api', rootRouter);
 
 app.listen(PORT, () => `Server is online on ${PORT}`)

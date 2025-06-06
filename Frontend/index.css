@@ -223,6 +223,76 @@ body {
     box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
 }
 
+/* CSS cho danh sách hình ảnh đã upload */
+.uploaded-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    border-bottom: 1px solid #eee;
+    gap: 0.75rem;
+}
+
+.uploaded-item-thumbnail {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    flex-shrink: 0;
+}
+
+.uploaded-item-name {
+    flex: 1;
+    font-size: 0.9rem;
+    color: #333;
+    word-break: break-word;
+}
+
+.delete-btn {
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+
+.delete-btn:hover {
+    background: #cc0000;
+}
+
+.delete-btn:active {
+    transform: scale(0.95);
+}
+
+/* Styling cho danh sách upload */
+#uploadedList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #f9f9f9;
+}
+
+#uploadedList:empty::before {
+    content: "Chưa có hình ảnh nào được upload";
+    display: block;
+    padding: 1rem;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+}
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .nav-container {

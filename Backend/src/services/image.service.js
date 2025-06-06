@@ -4,7 +4,7 @@ import { REDIS_URL } from "../common/constant/app.constant.js";
 const imageProcessingQueue = new Queue("image-processing", REDIS_URL);
 
 export const imageService = {
-  async createCollageJob(files, layout, borderWidth, borderColor) {
+  async createTaskJob(files, layout, borderWidth, borderColor) {
     if (!files || !Array.isArray(files) || files.length === 0) {
       throw new Error("No files provided for collage.");
     }
@@ -32,25 +32,46 @@ export const imageService = {
         type: "exponential",
         delay: 1000, 
       },
-      removeOnComplete: true, 
+      removeOnComplete: false, 
       removeOnFail: false, 
     });
     return job;
   },
 
-  async getJobStatus(jobId) {
+  async getTaskStatus(jobId) {
     const job = await imageProcessingQueue.getJob(jobId);
     if (!job) {
-      return null;
+      return { status: 'failed', error: 'Job not found' };
     }
     const state = await job.getState();
-    const result = await job.finished(); 
-    return {
-      id: job.id,
-      state: state,
-      progress: job.progress,
-      result: result,
-      failedReason: job.failedReason,
-    };
+
+    if (state === 'completed') {
+      const result = await job.finished();
+      if (result && result.collageUrl) {
+        return {
+          status: 'completed',
+          collageUrl: result.collageUrl,
+        };
+      } else if (typeof result === 'string') {
+        return {
+          status: 'completed',
+          collageUrl: `http://localhost:3000/${result.replace(/\\/g, '/')}`,
+        };
+      } else {
+        return {
+          status: 'completed',
+          result: result.base64 || result,
+        };
+      }
+    } else if (state === 'failed') {
+      return {
+        status: 'failed',
+        error: job.failedReason || 'Job failed',
+      };
+    } else {
+      return {
+        status: state === 'active' ? 'processing' : 'pending',
+      };
+    }
   },
 };
