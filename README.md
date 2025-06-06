@@ -57,5 +57,59 @@ Dự án gồm 4 phần chính:
 - Theo dõi tiến trình xử lý ảnh qua `task_id`
 - Hiển thị ảnh kết quả và tải xuống
 
+## 🧪 Hướng dẫn cài đặt & chạy dự án
+
+Dự án gồm 2 phần chính: `backend` và `frontend`. Ngoài ra cần Redis để quản lý hàng đợi tác vụ (task queue) và Celery để xử lý ảnh.
+
 ---
+
+### 1. Clone dự án & cài đặt yêu cầu
+
+Yêu cầu:
+- Node.js >= 16
+- Redis
+- Docker (nếu chưa cài Redis)
+
+git clone https://github.com/your-username/photo-collage-tool.git
+
+---
+
+### 2. Chạy Redis bằng Docker (nếu chưa cài Redis)
+
+```
+docker run -d -p 6379:6379 --name redis redis
+```
+
+Hoặc nếu bạn đã cài Redis bằng hệ thống, chỉ cần chạy:
+
+```bash
+redis-server
+```
+
+---
+
+### 3. Khởi động backend (Express.js)
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+- Server sẽ chạy ở `http://localhost:3000`
+- Kết nối Redis để gửi task xử lý ảnh
+
+```
+
+Thực hiện các bước:
+1. Tải lên nhiều hình ảnh
+2. Chọn kiểu ghép ảnh: **Ngang** hoặc **Dọc**
+3. Tuỳ chỉnh viền: màu sắc, độ dày
+4. Nhấn `Make Collage`
+5. Chờ xử lý và tải về ảnh kết quả
+
+---
+
+
+✅ Sau khi hoàn tất, bạn đã có thể sử dụng một công cụ ghép ảnh online chuyên nghiệp, dễ dùng và tiện lợi để chia sẻ lên mạng xã hội!
 
