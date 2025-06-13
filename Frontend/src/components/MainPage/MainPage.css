@@ -1,0 +1,143 @@
+.main-container {
+  display: flex;
+  gap: 32px;
+  padding: 32px;
+  justify-content: center;
+}
+
+.sidebar {
+  background: #f8faff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 24px 20px;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.upload-title {
+  font-weight: 600;
+  color: #3b82f6;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.image-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px 0;
+}
+.image-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 15px;
+  background: #fff;
+  border-radius: 6px;
+  padding: 4px 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.img-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  display: inline-block;
+}
+.img1 { background: #1e40af; }
+.img2 { background: #f87171; }
+.img3 { background: #22c55e; }
+.remove {
+  margin-left: auto;
+  color: #888;
+  cursor: pointer;
+  font-size: 18px;
+}
+.options-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.options-section label {
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.input-group label {
+  min-width: 48px;
+  color: #555;
+}
+.input-group input {
+  border: 1px solid #e0e6ed;
+  border-radius: 4px;
+  padding: 2px 8px;
+  width: 70px;
+  background: #fff;
+}
+.make-collage {
+  margin-top: 12px;
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 0;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.make-collage:hover {
+  background: #2563eb;
+}
+.preview-section {
+  background: #f3f6fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 32px 36px;
+  min-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+.collage-preview {
+  background: #e5eaf1;
+  border-radius: 12px;
+  padding: 32px 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.collage-frame {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px 18px;
+  display: flex;
+  gap: 18px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.img-thumb.large {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+}
+.download-btn {
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 32px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.download-btn:hover {
+  background: #2563eb;
+} 
