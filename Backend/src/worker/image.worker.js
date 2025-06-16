@@ -8,6 +8,9 @@ import uploadResult from "../common/multer/cloud.result.js";
 
 const queue = new Queue("image-processing", REDIS_URL);
 
+const MIN_WIDTH = 600; // hoặc giá trị bạn muốn
+const MIN_HEIGHT = 600; // hoặc giá trị bạn muốn
+
 export const processJob = async (job) => {
   const { files, layout, border_width, border_color } = job.data;
 
@@ -18,7 +21,8 @@ export const processJob = async (job) => {
   let totalWidth, totalHeight, result;
 
   if (layout === "horizontal") {
-    const minHeight = Math.min(...images.map(img => img.info.height));
+    let minHeight = Math.min(...images.map(img => img.info.height));
+    if (minHeight < MIN_HEIGHT) minHeight = MIN_HEIGHT;
     const resized = await Promise.all(
       images.map(img =>
         sharp(img.data)
@@ -47,7 +51,8 @@ export const processJob = async (job) => {
 
     await result.composite(composites);
   } else {
-    const minWidth = Math.min(...images.map(img => img.info.width));
+    let minWidth = Math.min(...images.map(img => img.info.width));
+    if (minWidth < MIN_WIDTH) minWidth = MIN_WIDTH;
     const resized = await Promise.all(
       images.map(img =>
         sharp(img.data)

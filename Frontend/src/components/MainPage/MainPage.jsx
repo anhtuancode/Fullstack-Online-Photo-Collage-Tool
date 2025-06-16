@@ -1,126 +1,222 @@
-import React, { useRef, useState } from 'react'
-import './MainPage.css'
+import React, { useRef, useState } from "react";
+import "./MainPage.css";
 
 function MainPage() {
-  const [images, setImages] = useState([])
-  const [border, setBorder] = useState('12 px')
-  const [color, setColor] = useState('#ffffff')
-  const fileInputRef = useRef(null)
+  const [images, setImages] = useState([]);
+  const [border, setBorder] = useState("12 px");
+  const [color, setColor] = useState("#ffffff");
+  const [collageUrl, setCollageUrl] = useState(null);
+  const fileInputRef = useRef(null);
+  const [layout, setLayout] = useState("horizontal");
+  const [message, setMessage] = useState("");
+
+  const showMessage = (msg) => {
+    setMessage(msg);
+    setTimeout(() => setMessage(""), 3000); // Ẩn sau 3s
+  };
 
   // Hàm upload hình lên API
   const handleUpload = async (e) => {
-    const file = e.target.files[0]
-    if (!file) return
-    const formData = new FormData()
-    formData.append('path', file)
+    const file = e.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("path", file);
     try {
-      const res = await fetch('http://localhost:3000/api/user/upload-image', {
-        method: 'POST',
-        body: formData
-      })
-      const data = await res.json()
-      console.log(data.data.imgUrl)
-      setImages(prev => [...prev, { 
-        url: `http://localhost:3000/${data.data.imgUrl}`, 
-        name: data.data.filename,
-        path: data.data.imgUrl,
-        file // Lưu thêm đường dẫn đầy đủ
-      }])
+      const res = await fetch("http://localhost:3000/api/user/upload-image", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      setImages((prev) => [
+        ...prev,
+        {
+          url: `http://localhost:3000/${data.data.imgUrl}`,
+          name: data.data.filename,
+          path: data.data.imgUrl,
+          file, // Lưu thêm đường dẫn đầy đủ
+        },
+      ]);
     } catch (err) {
-      alert('Upload failed!', err.error)
+      alert("Upload failed!", err.error);
     }
-  }
+  };
 
   // Hàm xóa hình khỏi danh sách
   const handleRemove = (idx) => {
-    setImages(prev => prev.filter((_, i) => i !== idx))
-  }
+    setImages((prev) => prev.filter((_, i) => i !== idx));
+  };
 
   // Hàm tạo collage (gửi dữ liệu lên API)
   const handleMakeCollage = async () => {
     if (images.length === 0) {
-      alert('Please upload at least one image')
-      return
+      alert("Please upload at least one image");
+      return;
     }
 
     try {
-      const formData = new FormData()
+      const formData = new FormData();
       // Thêm tất cả các đường dẫn hình ảnh vào formData
-      images.forEach(img => {
-        formData.append('paths', img.file)
-      })
-      
+      images.forEach((img) => {
+        formData.append("paths", img.file);
+      });
+
       // Thêm các thông tin khác
-      const layout = document.querySelector('input[name="collageType"]:checked').value
-      console.log(layout) 
-      formData.append('layout', layout)
-      formData.append('border_width', border.replace(' px', ''))
-      formData.append('border_color', color)
+      formData.append("layout", layout);
+      formData.append("border_width", border.replace(" px", ""));
+      formData.append("border_color", color);
 
-      const response = await fetch('http://localhost:3000/api/user/create-task', {
-        method: 'POST',
-        body: formData
-      })
+      const response = await fetch(
+        "http://localhost:3000/api/user/create-task",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
-      const data = await response.json()
+      const data = await response.json();
       if (data.data.jobId) {
-        alert('Task created successfully! Job ID: ' + data.data.jobId)
-        // TODO: Có thể thêm logic để kiểm tra trạng thái task ở đây
+        const jobId = data.data.jobId;
+        const interval = setInterval(async () => {
+          const res = await fetch(
+            `http://localhost:3000/api/user/check-status/${jobId}`
+          );
+          const data = await res.json();
+          if (data.data.status === "completed") {
+            const imageUrl = data.data.result.cloudUrl;
+            setCollageUrl(imageUrl);
+            showMessage("Make collage successfully!");
+            clearInterval(interval);
+          }
+        }, 1000);
       } else {
-        alert('Failed to create task')
+        alert("Failed to create task");
       }
     } catch (error) {
-      console.error('Error creating collage:', error)
-      alert('Failed to create collage')
+      console.error("Error creating collage:", error);
+      alert("Failed to create collage");
     }
-  }
+  };
+
+  const handleDownload = async () => {
+    if (!collageUrl) return;
+    try {
+      const response = await fetch(collageUrl, { mode: "cors" });
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "collage.jpg";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      alert("Không thể tải ảnh về. Có thể server không cho phép tải trực tiếp.", err);
+    }
+  };
 
   return (
     <div className="main-container">
+      {message && <div className="alert-overlay">{message}</div>}
       <div className="sidebar">
         <div className="upload-section">
-          <button className="upload-title" onClick={() => fileInputRef.current.click()}>Upload Image</button>
-          <input type="file" accept="image/*" style={{ display: 'none' }} ref={fileInputRef} onChange={handleUpload} />
+          <button
+            className="upload-title"
+            onClick={() => fileInputRef.current.click()}
+          >
+            Upload Image
+          </button>
+          <input
+            type="file"
+            accept="image/*"
+            style={{ display: "none" }}
+            ref={fileInputRef}
+            onChange={handleUpload}
+          />
           <ul className="image-list">
             {images.map((img, idx) => (
               <li key={idx}>
                 <img src={img.url} alt={img.name} className="img-thumb" />
                 <span>{img.name}</span>
-                <span className="remove" onClick={() => handleRemove(idx)}>&times;</span>
+                <span className="remove" onClick={() => handleRemove(idx)}>
+                  &times;
+                </span>
               </li>
             ))}
           </ul>
         </div>
         <div className="options-section">
-          <label><input type="radio" name="collageType" value="horizontal" defaultChecked /> Horizontal collage</label>
-          <label><input type="radio" name="collageType" value="vertical" /> Vertical collage</label>
+          <label>
+            <input
+              type="radio"
+              name="collageType"
+              value="horizontal"
+              checked={layout === "horizontal"}
+              onChange={() => setLayout("horizontal")}
+            />{" "}
+            Horizontal collage
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="collageType"
+              value="vertical"
+              checked={layout === "vertical"}
+              onChange={() => setLayout("vertical")}
+            /> Vertical collage
+          </label>
           <div className="input-group">
             <label>Border</label>
-            <input type="text" value={border} onChange={e => setBorder(e.target.value)} />
+            <input
+              type="text"
+              value={border}
+              onChange={(e) => setBorder(e.target.value)}
+            />
           </div>
           <div className="input-group">
             <label>Color</label>
-            <input type="text" value={color} onChange={e => setColor(e.target.value)} />
+            <input
+              type="text"
+              value={color}
+              onChange={(e) => setColor(e.target.value)}
+            />
           </div>
         </div>
-        <button className="make-collage" onClick={handleMakeCollage}>Make Collage</button>
+        <button className="make-collage" onClick={handleMakeCollage}>
+          Make Collage
+        </button>
       </div>
       <div className="preview-section">
         <div className="collage-preview">
-          <div className="collage-frame">
-            {images.length === 0 ? (
-              <span style={{color:'#aaa'}}>No images</span>
+          <div className={`collage-frame${layout === "vertical" ? " vertical" : ""}`}>
+            {collageUrl ? (
+              <img
+                src={collageUrl}
+                alt="Collage"
+                className="img-thumb large"
+                style={layout === "vertical" ? { maxHeight: "100%", maxWidth: "100%", height: "auto", width: "auto" } : {}}
+              />
+            ) : images.length === 0 ? (
+              <span style={{ color: "#aaa" }}>No images</span>
             ) : (
               images.map((img, idx) => (
-                <img key={idx} src={img.url} alt={img.name} className="img-thumb large" />
+                <img
+                  key={idx}
+                  src={img.url}
+                  alt={img.name}
+                  className="img-thumb large"
+                  style={layout === "vertical" ? { height: `${100 / images.length}%`, maxHeight: "none" } : {}}
+                />
               ))
             )}
           </div>
         </div>
-        <button className="download-btn">Download</button>
+        <button className="download-btn" onClick={handleDownload} disabled={!collageUrl}>
+          Download
+        </button>
       </div>
     </div>
-  )
+  );
 }
 
-export default MainPage 
+export default MainPage;
