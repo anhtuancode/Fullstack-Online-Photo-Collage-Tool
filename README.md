@@ -103,6 +103,16 @@ npm run dev
 
 ```
 
+### 4. Khởi động frontend (Reactjs)
+
+```bash
+npm run dev
+```
+
+- Server sẽ chạy ở `http://localhost:5173`
+
+```
+
 Thực hiện các bước:
 1. Tải lên nhiều hình ảnh
 2. Chọn kiểu ghép ảnh: **Ngang** hoặc **Dọc**
