@@ -9,9 +9,11 @@ function MainPage() {
   const fileInputRef = useRef(null);
   const [layout, setLayout] = useState("horizontal");
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("success");
 
-  const showMessage = (msg) => {
+  const showMessage = (msg, type = "success") => {
     setMessage(msg);
+    setMessageType(type);
     setTimeout(() => setMessage(""), 3000); // Ẩn sau 3s
   };
 
@@ -52,7 +54,22 @@ function MainPage() {
       alert("Please upload at least one image");
       return;
     }
-
+    // Kiểm tra border hợp lệ (0-1000)
+    const borderValue = parseInt(border.replace(/[^0-9]/g, ""), 10);
+    if (isNaN(borderValue) || borderValue < 0 || borderValue > 1000) {
+      showMessage("Border chỉ được phép từ 0 đến 1000", "error");
+      return;
+    }
+    // Kiểm tra color hợp lệ (mã hex)
+    const hexColorRegex = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+    if (!hexColorRegex.test(color.trim())) {
+      showMessage("Color phải là mã màu hex hợp lệ, ví dụ: #fff hoặc #ffffff", "error");
+      return;
+    }
+    if (!border || !color || border.trim() === "" || color.trim() === "") {
+      showMessage("Vui lòng nhập đầy đủ border và color", "error");
+      return;
+    }
     try {
       const formData = new FormData();
       // Thêm tất cả các đường dẫn hình ảnh vào formData
@@ -62,7 +79,7 @@ function MainPage() {
 
       // Thêm các thông tin khác
       formData.append("layout", layout);
-      formData.append("border_width", border.replace(" px", ""));
+      formData.append("border_width", borderValue);
       formData.append("border_color", color);
 
       const response = await fetch(
@@ -84,7 +101,7 @@ function MainPage() {
           if (data.data.status === "completed") {
             const imageUrl = data.data.result.cloudUrl;
             setCollageUrl(imageUrl);
-            showMessage("Make collage successfully!");
+            showMessage("Make collage successfully!", "success");
             clearInterval(interval);
           }
         }, 1000);
@@ -117,7 +134,9 @@ function MainPage() {
 
   return (
     <div className="main-container">
-      {message && <div className="alert-overlay">{message}</div>}
+      {message && (
+        <div className={`alert-overlay${messageType === "error" ? " error" : ""}`}>{message}</div>
+      )}
       <div className="sidebar">
         <div className="upload-section">
           <button
@@ -168,9 +187,19 @@ function MainPage() {
           <div className="input-group">
             <label>Border</label>
             <input
-              type="text"
-              value={border}
-              onChange={(e) => setBorder(e.target.value)}
+              type="number"
+              min={0}
+              max={1000}
+              value={parseInt(border.replace(/[^0-9]/g, ""), 10) || ""}
+              onChange={(e) => {
+                let val = e.target.value;
+                if (val === "") {
+                  setBorder("");
+                } else {
+                  let num = Math.max(0, Math.min(1000, parseInt(val, 10)));
+                  setBorder(num + " px");
+                }
+              }}
             />
           </div>
           <div className="input-group">

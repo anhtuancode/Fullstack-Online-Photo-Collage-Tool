@@ -12,7 +12,9 @@ const MIN_WIDTH = 600; // hoặc giá trị bạn muốn
 const MIN_HEIGHT = 600; // hoặc giá trị bạn muốn
 
 export const processJob = async (job) => {
-  const { files, layout, border_width, border_color } = job.data;
+  const { files, layout } = job.data;
+  const border_width = job.data.border_width ?? 0; 
+  const border_color = job.data.border_color ?? "#ffffff"; // mặc định trắng
 
   const images = await Promise.all(
     files.map(filePath => sharp(filePath).toBuffer({ resolveWithObject: true }))

@@ -136,6 +136,12 @@
   width: auto;
   object-fit: contain;
 }
+.collage-frame:not(.vertical) {
+  max-width: 700px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-wrap: nowrap;
+}
 .collage-frame:not(.vertical) .img-thumb.large {
   max-height: 200px;
 }
@@ -254,4 +260,10 @@
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-30px) translateX(-50%);}
   to { opacity: 1; transform: translateY(0) translateX(-50%);}
+}
+
+.alert-overlay.error {
+  background: #ef4444;
+  color: #fff;
+  border: 1px solid #fca5a5;
 } 
